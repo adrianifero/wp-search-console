@@ -1,10 +1,10 @@
 <?php
 /*
-Plugin Name: WP Search Console
-Plugin URI: https://adriantoro.com
+Plugin Name: AT Search Console
+Plugin URI: https://adriantoro.com/wordpress-plugins/at-search-console/
 Description: Jump into monitoring your website's clicks, positions, and optimize your site for better search performance for any page with just one click
 Version: 1.0.0
-Author: Adrian T.
+Author: Adrian Toro
 Author URI: https://adriantoro.com
 */
 
