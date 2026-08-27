@@ -1,61 +1,68 @@
-=== Plugin Name ===
-AT Search Console 
-
+=== AT Search Console ===
 Contributors: adrianifero
-Plugin Name: AT Search Console 
-Plugin URI: https://adriantoro.com/wordpress-plugins/at-search-console/
-Tags: SEO, google search console
-Author URI: http://adriantoro.com/
-Author: Adrian Toro
+Tags: seo, google search console, gsc, admin bar, performance
 Requires at least: 6.0
-Tested up to: 6.1.1
+Tested up to: 6.8
 Stable tag: 1.0.0
-Version: 1.0.0
-Requires PHP: 7.0
+Requires PHP: 7.4
 License: GPLv2 or later
 License URI: https://www.gnu.org/licenses/gpl-2.0.html
 
+Open the current page in Google Search Console from the WordPress admin bar. One click. No copy-paste.
+
 == Description ==
 
-Fellow marketers! Are you tired of jumping through hoops to access your Google Search Console data for a specific page? Introducing AT Search Console - the plugin that brings you a quick link to Google Search Console for any page of your website. No more hassle, no more extra clicks, no more delays! With WP Search Console, you can jump into monitoring your website's clicks, positions, and optimize your site for better search performance in no time. 
+You are looking at a page in WordPress. You want that same URL in Google Search Console performance. Without this plugin you copy the link, open GSC, find the page filter, paste.
 
-We marketers don't need a plugin to install the tracking code for Search Console on WordPress. That's not the purpose of AT Search Console. Neither do we need a plugin to display search console analytics data in the WordPress dashboard. Instead, our plugin focuses on giving you quick and direct access to your Google Search Console data, right from your WordPress admin bar and for the specific page you are visiting. That's it!
+AT Search Console adds **View in Search Console** to the admin bar. One click opens that URL’s clicks, impressions, CTR, and position in GSC.
 
-AT Search Console Features
+It does not install a tracking tag. It does not pull analytics into WordPress. It opens the right GSC screen for the page you are on.
 
-- Easy and quick access to your website's search performance data in Google Search Console.
-- A seamless integration with your WordPress website
-- Accessibility only for users with the 'manage_options' capability, ensuring you stay in control of your search visibility
+= Features =
+
+* Admin bar link on the front end for the current page
+* Same link when editing a published post or page in wp-admin
+* Works for users with the `manage_options` capability
+* Setting for URL-prefix vs domain Search Console property
+* Page filter uses “URLs containing” so UTM and other query variants still match
 
 == Installation ==
 
-Upload the plugin to your blog, activate it and go to any page on your website in the front-end. You will see a "View in Search Console" item on your Wordpress bar (black bar at the top).
+1. Install from Plugins → Add New (search “AT Search Console”), or upload a zip whose top-level folder is `at-search-console`.
+2. Activate AT Search Console.
+3. Visit any front-end page while logged in as an administrator. Use **View in Search Console** in the admin bar.
+4. If GSC opens the wrong property, go to Settings → AT Search Console and switch property type.
 
+Keep a single copy of the plugin. If two “AT Search Console” rows appear under Plugins, deactivate and delete the extra folder.
 
-== Upgrade Notice ==
+== Frequently Asked Questions ==
 
-== Screenshots ==
+= Do I need Google Search Console set up first? =
 
-1. *Quick access*: View in Search Console always available 
-2. *One Click*: Click on it and go straight to the current page in the Performance tab of Search Console
+Yes. The site (or domain) must be a verified property in your Google account. If it is not, Google will ask you to verify when the link opens.
 
-== Upgrade Notice == 
-Upgrade now to get a direct click to our page's performance in Google Search Console.
+= Why does it open the wrong property? =
+
+Your GSC property may be a domain property (`sc-domain:example.com`) while the plugin was set to URL prefix, or the other way around. Change it under Settings → AT Search Console.
+
+= Why do I see two AT Search Console plugins? =
+
+Each folder under `wp-content/plugins/` is a separate plugin. Keep one install in the `at-search-console` folder. WordPress.org updates replace that folder in place.
+
+= Does this replace a Search Console connection plugin? =
+
+No. This only deep-links to GSC for the current URL.
 
 == Changelog ==
 
 = 1.0.0 =
-* First version. Enjoy!
+* View in Search Console in the admin bar for the current page.
+* Same link when editing a published post or page.
+* Settings for URL-prefix vs domain Search Console property.
+* Page filter uses URLs containing (UTM and query variants).
+* Settings screen with icon and screenshot.
 
-== Frequently Asked Questions ==
+== Upgrade Notice ==
 
-= What to do after installing the plugin? =
-
-Just visit any page on your website (front-end) and click on the "View in Search Console" menu item at the top nav bar (the one that is only visible to you when you are logged in as an admin or editor).
-
-= What about if I have still not set up my Google Saerch Console? =
-
-No problem at all! The plugin will redirect you to the Google Search Console pointing to the property for your domain and you'll see a message that reads: "Oops, you don't have access to this property, Verify your ownership". You can start the verification process from there."
-
-
-== Donations ==
+= 1.0.0 =
+Adds the admin bar link, property-type setting, and a page filter that includes UTM variants.
