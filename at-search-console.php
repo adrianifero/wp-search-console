@@ -3,7 +3,7 @@
  * Plugin Name: AT Search Console
  * Plugin URI:  https://adriantoro.com/wordpress-plugins/at-search-console/
  * Description: Open the current page in Google Search Console from the WordPress admin bar. One click to that URL's performance.
- * Version:     1.0.0
+ * Version:     1.1.0
  * Author:      Adrian Toro
  * Author URI:  https://adriantoro.com
  * Text Domain: at-search-console
@@ -21,7 +21,7 @@ final class AT_Search_Console {
 
 	const OPTION_KEY        = 'at_search_console_settings';
 	const LEGACY_OPTION_KEY = 'at_search_console_option';
-	const VERSION           = '1.0.0';
+	const VERSION           = '1.1.0';
 	/** Directory slug on wordpress.org — installs must use this folder name. */
 	const INSTALL_SLUG      = 'at-search-console';
 
