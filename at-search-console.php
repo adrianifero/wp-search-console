@@ -19,14 +19,50 @@ if ( ! defined( 'ABSPATH' ) ) {
 
 final class AT_Search_Console {
 
-	const OPTION_KEY = 'at_search_console_settings';
-	const VERSION    = '1.1.0';
+	const OPTION_KEY        = 'at_search_console_settings';
+	const LEGACY_OPTION_KEY = 'at_search_console_option';
+	const VERSION           = '1.1.0';
 
 	public function __construct() {
+		add_action( 'plugins_loaded', array( __CLASS__, 'maybe_migrate_legacy_option' ), 5 );
 		add_action( 'admin_bar_menu', array( $this, 'add_admin_bar_item' ), 100 );
 		add_action( 'admin_menu', array( $this, 'register_settings_page' ) );
 		add_action( 'admin_init', array( $this, 'register_settings' ) );
 		add_filter( 'plugin_action_links_' . plugin_basename( __FILE__ ), array( $this, 'action_links' ) );
+	}
+
+	/**
+	 * On activate/upgrade: pull 1.0.1 site option into 1.1.0 settings.
+	 */
+	public static function activate() {
+		self::maybe_migrate_legacy_option();
+	}
+
+	/**
+	 * Migrate site-only 1.0.1 option `at_search_console_option` (regular|domain)
+	 * into `at_search_console_settings` (url_prefix|domain), then remove the legacy key.
+	 *
+	 * Does not overwrite settings the user already saved under 1.1.0.
+	 */
+	public static function maybe_migrate_legacy_option() {
+		$legacy = get_option( self::LEGACY_OPTION_KEY, false );
+		if ( false === $legacy ) {
+			return;
+		}
+
+		$type = ( 'domain' === $legacy ) ? 'domain' : 'url_prefix';
+
+		$stored = get_option( self::OPTION_KEY, false );
+		if ( false === $stored ) {
+			update_option(
+				self::OPTION_KEY,
+				array(
+					'property_type' => $type,
+				)
+			);
+		}
+
+		delete_option( self::LEGACY_OPTION_KEY );
 	}
 
 	/**
@@ -83,11 +119,19 @@ final class AT_Search_Console {
 		if ( ! current_user_can( 'manage_options' ) ) {
 			return;
 		}
-		$settings = $this->settings();
+		$settings  = $this->settings();
+		$icon_path = plugin_dir_path( __FILE__ ) . 'img/icon-256x256.png';
+		$icon_url  = plugin_dir_url( __FILE__ ) . 'img/icon-256x256.png';
+		$shot_path = plugin_dir_path( __FILE__ ) . 'img/screenshot-1.png';
+		$shot_url  = plugin_dir_url( __FILE__ ) . 'img/screenshot-1.png';
 		?>
 		<div class="wrap">
-			<h1><?php echo esc_html__( 'AT Search Console', 'at-search-console' ); ?></h1>
+			<?php if ( file_exists( $icon_path ) ) : ?>
+				<img src="<?php echo esc_url( $icon_url ); ?>" alt="" width="60" height="60" style="vertical-align:middle;margin-right:12px;" />
+			<?php endif; ?>
+			<h1 style="display:inline-block;vertical-align:middle;"><?php echo esc_html__( 'AT Search Console', 'at-search-console' ); ?></h1>
 			<p><?php echo esc_html__( 'Adds a “View in Search Console” link to the admin bar. It opens the current page’s performance in Google Search Console so you do not have to paste the URL by hand.', 'at-search-console' ); ?></p>
+			<p><?php echo esc_html__( 'If your site is verified in Google Search Console as a URL-prefix property, you are set. If it is a domain property (sc-domain:…), choose Domain below.', 'at-search-console' ); ?></p>
 			<form method="post" action="options.php">
 				<?php settings_fields( 'at_search_console' ); ?>
 				<table class="form-table" role="presentation">
@@ -97,7 +141,7 @@ final class AT_Search_Console {
 							<fieldset>
 								<label>
 									<input type="radio" name="<?php echo esc_attr( self::OPTION_KEY ); ?>[property_type]" value="url_prefix" <?php checked( $settings['property_type'], 'url_prefix' ); ?> />
-									<?php echo esc_html__( 'URL prefix (https://example.com/)', 'at-search-console' ); ?>
+									<?php echo esc_html__( 'URL prefix / regular (https://example.com/)', 'at-search-console' ); ?>
 								</label>
 								<br />
 								<label>
@@ -113,6 +157,10 @@ final class AT_Search_Console {
 				</table>
 				<?php submit_button(); ?>
 			</form>
+			<p><?php echo esc_html__( 'After saving, visit any front-end page and use View in Search Console in the admin bar.', 'at-search-console' ); ?></p>
+			<?php if ( file_exists( $shot_path ) ) : ?>
+				<img src="<?php echo esc_url( $shot_url ); ?>" alt="<?php echo esc_attr__( 'View in Search Console in the admin bar', 'at-search-console' ); ?>" style="max-width:680px;height:auto;" />
+			<?php endif; ?>
 		</div>
 		<?php
 	}
@@ -122,8 +170,11 @@ final class AT_Search_Console {
 	 * @return array<int, string>
 	 */
 	public function action_links( $links ) {
-		$url     = admin_url( 'options-general.php?page=at-search-console' );
-		$links[] = '<a href="' . esc_url( $url ) . '">' . esc_html__( 'Settings', 'at-search-console' ) . '</a>';
+		$url = admin_url( 'options-general.php?page=at-search-console' );
+		array_unshift(
+			$links,
+			'<a href="' . esc_url( $url ) . '">' . esc_html__( 'Settings', 'at-search-console' ) . '</a>'
+		);
 		return $links;
 	}
 
@@ -223,5 +274,7 @@ final class AT_Search_Console {
 		);
 	}
 }
+
+register_activation_hook( __FILE__, array( 'AT_Search_Console', 'activate' ) );
 
 new AT_Search_Console();

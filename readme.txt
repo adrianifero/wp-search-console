@@ -23,7 +23,8 @@ It does not install a tracking tag. It does not pull analytics into WordPress. I
 * Admin bar link on the front end for the current page
 * Same link when editing a published post or page in wp-admin
 * Works for users with the `manage_options` capability
-* Setting for URL-prefix vs domain Search Console property
+* Setting for URL-prefix (regular) vs domain Search Console property
+* Upgrades from 1.0.1 keep your saved property type
 
 == Installation ==
 
@@ -42,6 +43,10 @@ Yes. The site (or domain) must be a verified property in your Google account. If
 
 Your GSC property may be a domain property (`sc-domain:example.com`) while the plugin was set to URL prefix, or the other way around. Change it under Settings → AT Search Console.
 
+= I was on 1.0.1 with Domain selected. Do I need to reconfigure? =
+
+No. 1.1.0 migrates the old `at_search_console_option` setting automatically on activate or first load.
+
 = Does this replace a Search Console connection plugin? =
 
 No. This only deep-links to GSC for the current URL.
@@ -52,10 +57,16 @@ No. This only deep-links to GSC for the current URL.
 * Fix broken metrics parameter in the GSC URL (stray `)`).
 * Encode the page URL correctly for the performance filter.
 * Use exact page match (`page=!…`) instead of a loose prefix.
-* Add Settings for URL-prefix vs domain property.
+* Settings for URL-prefix vs domain property (Settings API).
+* Migrate 1.0.1 option `at_search_console_option` (regular/domain) into the new settings key.
+* Bundle settings icon and screenshot from the 1.0.1 site package.
 * Show the admin bar link when editing a published post or page.
 * Remove unused Yoast focus-keyword code path.
 * Refresh readme for current WordPress.
+
+= 1.0.1 =
+* Select between a domain property or a regular (URL-prefix) property.
+* Settings screen with icon and screenshot. (Shipped on sites; not previously on GitHub.)
 
 = 1.0.0 =
 * First version.
@@ -63,4 +74,4 @@ No. This only deep-links to GSC for the current URL.
 == Upgrade Notice ==
 
 = 1.1.0 =
-Fixes the Search Console link and adds a property-type setting. Update if the admin bar link mis-filters or opens the wrong property.
+Fixes the Search Console link. Absorbs 1.0.1 property setting with automatic migration. Update if the admin bar link mis-filters or opens the wrong property.
