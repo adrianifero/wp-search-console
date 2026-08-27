@@ -8,9 +8,11 @@ VERSION="$(grep -E '^\s*\* Version:' at-search-console.php | head -1 | awk '{pri
 SLUG="at-search-console"
 STAGE="$(mktemp -d)"
 OUT="${ROOT}/dist/${SLUG}-${VERSION}.zip"
+rm -f "$OUT"
 
 mkdir -p "${ROOT}/dist" "${STAGE}/${SLUG}/img"
-cp at-search-console.php readme.txt README.md "${STAGE}/${SLUG}/"
+# Match .distignore: wordpress.org uses readme.txt, not GitHub README.md.
+cp at-search-console.php readme.txt "${STAGE}/${SLUG}/"
 cp img/icon-256x256.png img/screenshot-1.png "${STAGE}/${SLUG}/img/"
 
 # Do not ship OS junk or git metadata.

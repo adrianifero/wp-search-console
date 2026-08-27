@@ -1,2 +1,12 @@
 # Auto detect text files and perform LF normalization
 * text=auto
+
+# Keep GitHub-only paths out of `git archive` zips.
+/.wordpress-org export-ignore
+/.github export-ignore
+/bin export-ignore
+/dist export-ignore
+/.gitattributes export-ignore
+/.gitignore export-ignore
+/.distignore export-ignore
+/README.md export-ignore

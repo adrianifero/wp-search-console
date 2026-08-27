@@ -3,7 +3,7 @@ Contributors: adrianifero
 Tags: seo, google search console, gsc, admin bar, performance
 Requires at least: 6.0
 Tested up to: 6.8
-Stable tag: 1.0.0
+Stable tag: 1.1.0
 Requires PHP: 7.4
 License: GPLv2 or later
 License URI: https://www.gnu.org/licenses/gpl-2.0.html
@@ -53,16 +53,26 @@ Each folder under `wp-content/plugins/` is a separate plugin. Keep one install i
 
 No. This only deep-links to GSC for the current URL.
 
+== Screenshots ==
+
+1. View in Search Console in the WordPress admin bar.
+
 == Changelog ==
 
-= 1.0.0 =
-* View in Search Console in the admin bar for the current page.
-* Same link when editing a published post or page.
-* Settings for URL-prefix vs domain Search Console property.
-* Page filter uses URLs containing (UTM and query variants).
+= 1.1.0 =
+* Rebuild: encoded URLs, fixed metrics parameter, admin-bar link when editing a published post or page.
+* Settings for URL-prefix vs domain Search Console property, with migration from the old option.
+* Page filter uses URLs containing so UTM and other query variants still match.
+* Warn if two copies of the plugin are active, or if the folder is not `at-search-console`.
 * Settings screen with icon and screenshot.
+
+= 1.0.1 =
+* Select between a domain property or a regular property.
+
+= 1.0.0 =
+* First version.
 
 == Upgrade Notice ==
 
-= 1.0.0 =
-Adds the admin bar link, property-type setting, and a page filter that includes UTM variants.
+= 1.1.0 =
+Fixes the Search Console link, migrates the old property setting, and adds the admin-bar link when editing a published page. Update from 1.0.1.
