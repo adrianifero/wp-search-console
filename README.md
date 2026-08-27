@@ -2,16 +2,24 @@
 
 Open the current page in Google Search Console from the WordPress admin bar. One click to that URL's performance.
 
+**WordPress.org:** [AT Search Console](https://wordpress.org/plugins/at-search-console/)  
+**Install folder (required):** `at-search-console`
+
 ## What it does
 
 Admin bar → **View in Search Console** → Google Search Console performance for the current page URL.
 
 ## Install
 
-1. Upload this folder to `/wp-content/plugins/` or install from a zip.
-2. Activate **AT Search Console**.
-3. Visit any front-end page as an administrator and use **View in Search Console** in the admin bar.
-4. If GSC opens the wrong property, go to Settings → AT Search Console and switch property type.
+Prefer **Plugins → Add New** from WordPress.org. That keeps the plugin in `wp-content/plugins/at-search-console/`, which is what directory updates replace.
+
+If you upload a zip manually, the top-level folder inside the zip must be `at-search-console` (not the GitHub repo name). Otherwise WordPress installs a second plugin beside the first.
+
+Build a correctly named zip from this repo:
+
+```bash
+./bin/build-release-zip.sh
+```
 
 ## Upgrading from 1.0.1
 

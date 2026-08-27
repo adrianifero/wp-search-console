@@ -3,7 +3,7 @@ Contributors: adrianifero
 Tags: seo, google search console, gsc, admin bar, performance
 Requires at least: 6.0
 Tested up to: 6.8
-Stable tag: 1.1.0
+Stable tag: 1.1.1
 Requires PHP: 7.4
 License: GPLv2 or later
 License URI: https://www.gnu.org/licenses/gpl-2.0.html
@@ -24,14 +24,17 @@ It does not install a tracking tag. It does not pull analytics into WordPress. I
 * Same link when editing a published post or page in wp-admin
 * Works for users with the `manage_options` capability
 * Setting for URL-prefix vs domain Search Console property
+* Page filter uses “URLs containing” so UTM and other query variants still match
 * Upgrades from 1.0.1 keep your saved property type
 
 == Installation ==
 
-1. Upload the plugin folder to `/wp-content/plugins/` or install the zip from Plugins → Add New.
+1. Install from Plugins → Add New (search “AT Search Console”), or upload a zip whose top-level folder is `at-search-console`.
 2. Activate AT Search Console.
 3. Visit any front-end page while logged in as an administrator. Use **View in Search Console** in the admin bar.
 4. If GSC opens the wrong property, go to Settings → AT Search Console and switch property type.
+
+Do not install a second copy beside an existing one. If you see two “AT Search Console” rows under Plugins, deactivate and delete the older folder.
 
 == Frequently Asked Questions ==
 
@@ -47,16 +50,24 @@ Your GSC property may be a domain property (`sc-domain:example.com`) while the p
 
 No. Your property-type setting migrates automatically on activate or first load.
 
+= Why do I see two AT Search Console plugins? =
+
+WordPress treats each plugin folder as a separate plugin. A zip whose top-level folder is not `at-search-console` installs beside the existing copy. Keep one install in the `at-search-console` folder. Updates from WordPress.org replace that folder in place.
+
 = Does this replace a Search Console connection plugin? =
 
 No. This only deep-links to GSC for the current URL.
 
 == Changelog ==
 
+= 1.1.1 =
+* Use “URLs containing” for the GSC page filter (UTM and query variants).
+* Admin notice when another AT Search Console copy is active, or when the install folder is not `at-search-console`.
+* Document the required install folder for WordPress.org updates.
+
 = 1.1.0 =
 * Fix broken metrics parameter in the GSC URL (stray `)`).
 * Encode the page URL correctly for the performance filter.
-* Use exact page match (`page=!…`) instead of a loose prefix.
 * Settings for URL-prefix vs domain property (Settings API).
 * Migrate the 1.0.1 property-type option to the new settings key.
 * Include settings icon and screenshot assets.
@@ -73,5 +84,5 @@ No. This only deep-links to GSC for the current URL.
 
 == Upgrade Notice ==
 
-= 1.1.0 =
-Fixes the Search Console link and improves the property-type setting with automatic migration from 1.0.1. Update if the admin bar link mis-filters or opens the wrong property.
+= 1.1.1 =
+Page filter uses URLs containing (better with UTM). Keep a single install in the `at-search-console` folder so WordPress.org updates replace it in place.

@@ -3,7 +3,7 @@
  * Plugin Name: AT Search Console
  * Plugin URI:  https://adriantoro.com/wordpress-plugins/at-search-console/
  * Description: Open the current page in Google Search Console from the WordPress admin bar. One click to that URL's performance.
- * Version:     1.1.0
+ * Version:     1.1.1
  * Author:      Adrian Toro
  * Author URI:  https://adriantoro.com
  * Text Domain: at-search-console
@@ -21,13 +21,16 @@ final class AT_Search_Console {
 
 	const OPTION_KEY        = 'at_search_console_settings';
 	const LEGACY_OPTION_KEY = 'at_search_console_option';
-	const VERSION           = '1.1.0';
+	const VERSION           = '1.1.1';
+	/** Directory slug on wordpress.org — installs must use this folder name. */
+	const INSTALL_SLUG      = 'at-search-console';
 
 	public function __construct() {
 		add_action( 'plugins_loaded', array( __CLASS__, 'maybe_migrate_legacy_option' ), 5 );
 		add_action( 'admin_bar_menu', array( $this, 'add_admin_bar_item' ), 100 );
 		add_action( 'admin_menu', array( $this, 'register_settings_page' ) );
 		add_action( 'admin_init', array( $this, 'register_settings' ) );
+		add_action( 'admin_notices', array( $this, 'maybe_admin_notices' ) );
 		add_filter( 'plugin_action_links_' . plugin_basename( __FILE__ ), array( $this, 'action_links' ) );
 	}
 
@@ -240,11 +243,60 @@ final class AT_Search_Console {
 		$query = array(
 			'resource_id' => $this->resource_id(),
 			'metrics'     => 'CLICKS,IMPRESSIONS,CTR,POSITION',
-			// Exact page match in GSC deep links.
-			'page'        => '!' . $page_url,
+			// URLs containing — catches UTM and other query variants.
+			'page'        => '*' . $page_url,
 		);
 
 		return add_query_arg( $query, 'https://search.google.com/search-console/performance/search-analytics' );
+	}
+
+	/**
+	 * Warn when another AT Search Console copy is active, or this copy is not in the
+	 * wordpress.org install folder (so directory updates would not replace it).
+	 */
+	public function maybe_admin_notices() {
+		if ( ! current_user_can( 'activate_plugins' ) ) {
+			return;
+		}
+
+		if ( ! function_exists( 'get_plugins' ) ) {
+			require_once ABSPATH . 'wp-admin/includes/plugin.php';
+		}
+
+		$ours     = plugin_basename( __FILE__ );
+		$our_dir  = dirname( $ours );
+		$dupes    = array();
+
+		foreach ( get_plugins() as $path => $data ) {
+			if ( $path === $ours ) {
+				continue;
+			}
+			if ( empty( $data['Name'] ) || 'AT Search Console' !== $data['Name'] ) {
+				continue;
+			}
+			if ( is_plugin_active( $path ) ) {
+				$dupes[] = $path;
+			}
+		}
+
+		if ( ! empty( $dupes ) ) {
+			$plugins_url = admin_url( 'plugins.php' );
+			echo '<div class="notice notice-error"><p>';
+			echo esc_html__( 'Another copy of AT Search Console is active. Deactivate and delete the older copy so Settings and the admin bar link only appear once.', 'at-search-console' );
+			echo ' <a href="' . esc_url( $plugins_url ) . '">' . esc_html__( 'Open Plugins', 'at-search-console' ) . '</a>';
+			echo '</p></div>';
+		}
+
+		if ( self::INSTALL_SLUG !== $our_dir ) {
+			echo '<div class="notice notice-warning"><p>';
+			printf(
+				/* translators: 1: current folder name, 2: required folder name */
+				esc_html__( 'AT Search Console is installed in “%1$s”. For WordPress.org updates to replace this install, the folder must be “%2$s”. Deactivate this copy, delete it, then install from Plugins → Add New (or upload a zip whose top-level folder is %2$s).', 'at-search-console' ),
+				esc_html( $our_dir ),
+				esc_html( self::INSTALL_SLUG )
+			);
+			echo '</p></div>';
+		}
 	}
 
 	/**
