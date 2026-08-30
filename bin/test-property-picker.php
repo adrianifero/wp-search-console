@@ -1,14 +1,19 @@
 #!/usr/bin/env php
 <?php
 /**
- * Headless tests for AT Search Console 1.2.0 property picker / GSC URL logic.
+ * Headless tests for AT Search Console property picker / GSC URL logic.
  * Not shipped in the WordPress.org zip (.distignore /bin).
  */
 define( 'ABSPATH', __DIR__ . '/' );
 
-$GLOBALS['test_home']    = 'https://infoeplus.com';
-$GLOBALS['test_site']    = 'https://infoeplus.com';
-$GLOBALS['test_options'] = array();
+$GLOBALS['test_home']         = 'https://infoeplus.com';
+$GLOBALS['test_site']         = 'https://infoeplus.com';
+$GLOBALS['test_options']      = array();
+$GLOBALS['test_is_admin']     = false;
+$GLOBALS['test_screen_base']  = null;
+$GLOBALS['test_post_status']  = array();
+$GLOBALS['test_permalinks']   = array();
+$GLOBALS['test_preview_urls'] = array();
 
 function add_action() {}
 function add_filter() {}
@@ -44,6 +49,24 @@ function delete_option( $key ) {
 }
 function add_query_arg( $args, $url ) {
 	return $url . ( false === strpos( $url, '?' ) ? '?' : '&' ) . http_build_query( $args );
+}
+function is_admin() {
+	return ! empty( $GLOBALS['test_is_admin'] );
+}
+function get_current_screen() {
+	if ( null === $GLOBALS['test_screen_base'] ) {
+		return null;
+	}
+	return (object) array( 'base' => $GLOBALS['test_screen_base'] );
+}
+function get_post_status( $post_id ) {
+	return $GLOBALS['test_post_status'][ $post_id ] ?? false;
+}
+function get_permalink( $post_id ) {
+	return $GLOBALS['test_permalinks'][ $post_id ] ?? false;
+}
+function get_preview_post_link( $post_id ) {
+	return $GLOBALS['test_preview_urls'][ $post_id ] ?? false;
 }
 
 require dirname( __DIR__ ) . '/at-search-console.php';
@@ -159,6 +182,34 @@ expect( 'test URL has no page filter', false === strpos( $test_url, 'page=' ) );
 
 $js = file_get_contents( dirname( __DIR__ ) . '/js/settings.js' );
 expect( 'settings.js updates test link from dropdown', false !== strpos( $js, 'testLink.href' ) && false !== strpos( $js, 'select.addEventListener' ) );
+
+$GLOBALS['test_is_admin']    = false;
+$GLOBALS['test_screen_base'] = null;
+expect(
+	'front-end admin bar parent is site-name',
+	'site-name' === call_private( $obj, $plugin, 'admin_bar_parent_id' )
+);
+
+$GLOBALS['test_is_admin']    = true;
+$GLOBALS['test_screen_base'] = 'post';
+expect(
+	'post editor admin bar parent is edit',
+	'edit' === call_private( $obj, $plugin, 'admin_bar_parent_id' )
+);
+
+$GLOBALS['test_post_status'] = array( 42 => 'publish' );
+$GLOBALS['test_permalinks']  = array( 42 => 'https://infoeplus.com/hello/' );
+expect(
+	'published post URL uses permalink',
+	'https://infoeplus.com/hello/' === call_private( $obj, $plugin, 'post_url_for_gsc', array( 42 ) )
+);
+
+$GLOBALS['test_post_status']  = array( 43 => 'draft' );
+$GLOBALS['test_preview_urls'] = array( 43 => 'https://infoeplus.com/?p=43&preview=true' );
+expect(
+	'draft post URL uses preview link',
+	'https://infoeplus.com/?p=43&preview=true' === call_private( $obj, $plugin, 'post_url_for_gsc', array( 43 ) )
+);
 
 echo $failed ? "\n$failed failed\n" : "\nAll checks passed\n";
 exit( $failed ? 1 : 0 );
