@@ -3,7 +3,7 @@
  * Plugin Name: AT Search Console
  * Plugin URI:  https://adriantoro.com/wordpress-plugins/at-search-console/
  * Description: Open the current page in Google Search Console from the WordPress admin bar. One click to that URL's performance.
- * Version:     1.2.0
+ * Version:     1.2.1
  * Author:      Adrian Toro
  * Author URI:  https://adriantoro.com
  * Text Domain: at-search-console
@@ -21,7 +21,7 @@ final class AT_Search_Console {
 
 	const OPTION_KEY        = 'at_search_console_settings';
 	const LEGACY_OPTION_KEY   = 'at_search_console_option';
-	const VERSION             = '1.2.0';
+	const VERSION             = '1.2.1';
 	const INSTALL_SLUG        = 'at-search-console';
 	const GSC_PERFORMANCE_URL = 'https://search.google.com/search-console/performance/search-analytics';
 
@@ -509,9 +509,8 @@ final class AT_Search_Console {
 			$screen = function_exists( 'get_current_screen' ) ? get_current_screen() : null;
 			if ( $screen && 'post' === $screen->base ) {
 				$post_id = isset( $_GET['post'] ) ? absint( $_GET['post'] ) : 0; // phpcs:ignore WordPress.Security.NonceVerification.Recommended
-				if ( $post_id && 'publish' === get_post_status( $post_id ) ) {
-					$permalink = get_permalink( $post_id );
-					return is_string( $permalink ) ? $permalink : '';
+				if ( $post_id ) {
+					return $this->post_url_for_gsc( $post_id );
 				}
 			}
 			return '';
@@ -532,6 +531,48 @@ final class AT_Search_Console {
 		}
 
 		return home_url( '/' );
+	}
+
+	/**
+	 * Front-end or preview URL for a post when building the GSC page filter.
+	 *
+	 * @param int $post_id Post ID.
+	 * @return string Empty when no URL is available.
+	 */
+	private function post_url_for_gsc( $post_id ) {
+		$status = get_post_status( $post_id );
+		if ( ! is_string( $status ) ) {
+			return '';
+		}
+
+		if ( in_array( $status, array( 'publish', 'private' ), true ) ) {
+			$permalink = get_permalink( $post_id );
+			return is_string( $permalink ) ? $permalink : '';
+		}
+
+		if ( in_array( $status, array( 'draft', 'pending', 'future' ), true ) ) {
+			$preview = get_preview_post_link( $post_id );
+			return is_string( $preview ) ? $preview : '';
+		}
+
+		return '';
+	}
+
+	/**
+	 * Admin bar parent node. Core hides custom top-level items on narrow viewports.
+	 *
+	 * @return string|null Parent node id, or null when the link should not appear.
+	 */
+	private function admin_bar_parent_id() {
+		if ( is_admin() ) {
+			$screen = function_exists( 'get_current_screen' ) ? get_current_screen() : null;
+			if ( $screen && 'post' === $screen->base ) {
+				return 'edit';
+			}
+			return null;
+		}
+
+		return 'site-name';
 	}
 
 	/**
@@ -643,6 +684,11 @@ final class AT_Search_Console {
 			return;
 		}
 
+		$parent = $this->admin_bar_parent_id();
+		if ( null === $parent ) {
+			return;
+		}
+
 		$page_url = $this->current_page_url();
 		if ( '' === $page_url ) {
 			return;
@@ -650,10 +696,11 @@ final class AT_Search_Console {
 
 		$admin_bar->add_node(
 			array(
-				'id'    => 'at-view-gsc',
-				'title' => __( 'View in Search Console', 'at-search-console' ),
-				'href'  => $this->build_gsc_url( $page_url ),
-				'meta'  => array(
+				'id'     => 'at-view-gsc',
+				'parent' => $parent,
+				'title'  => __( 'View in Search Console', 'at-search-console' ),
+				'href'   => $this->build_gsc_url( $page_url ),
+				'meta'   => array(
 					'target' => '_blank',
 					'rel'    => 'noopener noreferrer',
 					'title'  => __( 'Open this page in Google Search Console performance', 'at-search-console' ),

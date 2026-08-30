@@ -3,7 +3,7 @@ Contributors: adrianifero
 Tags: seo, google search console, gsc, admin bar, performance
 Requires at least: 6.0
 Tested up to: 7.1
-Stable tag: 1.2.0
+Stable tag: 1.2.1
 Requires PHP: 7.4
 License: GPLv2 or later
 License URI: https://www.gnu.org/licenses/gpl-2.0.html
@@ -20,8 +20,8 @@ It does not install a tracking tag. It does not pull analytics into WordPress. I
 
 = Features =
 
-* Admin bar link on the front end for the current page
-* Same link when editing a published post or page in wp-admin
+* Admin bar link on the front end for the current page (including mobile: under the site name menu)
+* Same link when editing a post or page in wp-admin (under the pencil menu, including drafts)
 * Works for users with the `manage_options` capability
 * Pick your exact Search Console property from likely candidates (domain or URL prefix)
 * **Test this property** link on the settings screen before using the admin bar
@@ -60,6 +60,10 @@ No. This only deep-links to GSC for the current URL.
 
 == Changelog ==
 
+= 1.2.1 =
+* **View in Search Console** appears on mobile: the link lives under the site name menu on the front end and under the pencil menu in the post editor (WordPress hides custom top-level admin bar items on narrow screens).
+* Admin bar link when editing draft, pending, or scheduled posts (uses the preview URL for the page filter).
+
 = 1.2.0 =
 * Property picker: choose the exact Search Console property (domain or URL prefix) instead of abstract type radios.
 * **Test this property** on settings to verify access before using the admin bar; updates live when you change the dropdown (no save required to test).
@@ -81,6 +85,9 @@ No. This only deep-links to GSC for the current URL.
 * First version.
 
 == Upgrade Notice ==
+
+= 1.2.1 =
+Mobile admin bar fix and draft post support. Recommended if you use the admin bar on a phone or tablet.
 
 = 1.2.0 =
 Easier property setup with a picker and test link. Existing domain/URL-prefix choices migrate automatically. Update from 1.1.0.
