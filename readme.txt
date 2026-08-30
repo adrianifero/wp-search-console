@@ -14,14 +14,16 @@ Open the current page in Google Search Console from the WordPress admin bar. One
 
 You are looking at a page in WordPress. You want that same URL in Google Search Console performance. Without this plugin you copy the link, open GSC, find the page filter, paste.
 
-AT Search Console adds **View in Search Console** to the admin bar. One click opens that URL’s clicks, impressions, CTR, and position in GSC.
+AT Search Console adds **View in Search Console** to the WordPress admin bar. One click opens that URL’s clicks, impressions, CTR, and position in GSC.
+
+**Where to find it:** on the front end, open the **site name** menu at the top left of the admin bar (next to the WordPress logo). When editing a post or page, open the **pencil (Edit)** menu instead. WordPress does not allow custom top-level admin bar links on phones and tablets, so the link always lives in those menus—not as a standalone item on the right.
 
 It does not install a tracking tag. It does not pull analytics into WordPress. It opens the right GSC screen for the page you are on.
 
 = Features =
 
-* Admin bar link on the front end for the current page (including mobile: under the site name menu)
-* Same link when editing a post or page in wp-admin (under the pencil menu, including drafts)
+* **View in Search Console** under the site name menu on the front end (desktop and mobile)
+* Same link under the pencil menu when editing a post or page in wp-admin (including drafts)
 * Works for users with the `manage_options` capability
 * Pick your exact Search Console property from likely candidates (domain or URL prefix)
 * **Test this property** link on the settings screen before using the admin bar
@@ -32,11 +34,17 @@ It does not install a tracking tag. It does not pull analytics into WordPress. I
 1. Install from Plugins → Add New (search “AT Search Console”), or upload a zip whose top-level folder is `at-search-console`.
 2. Activate AT Search Console.
 3. Go to Settings → AT Search Console. Pick the property that matches Search Console, click **Test this property**, then save.
-4. Visit any front-end page while logged in as an administrator. Use **View in Search Console** in the admin bar.
+4. Visit any front-end page while logged in as an administrator. Open the **site name** menu at the top left of the admin bar and click **View in Search Console**.
 
 Keep a single copy of the plugin. If two “AT Search Console” rows appear under Plugins, deactivate and delete the extra folder.
 
 == Frequently Asked Questions ==
+
+= Where is View in Search Console in the admin bar? =
+
+On the front end, click your **site name** at the top left of the admin bar (the menu that also lists Dashboard, Plugins, Themes). **View in Search Console** is an item in that dropdown—not a separate link on the right side of the bar.
+
+When editing a post or page in wp-admin, open the **pencil (Edit)** menu in the admin bar for the same link.
 
 = Do I need Google Search Console set up first? =
 
@@ -56,13 +64,14 @@ No. This only deep-links to GSC for the current URL.
 
 == Screenshots ==
 
-1. View in Search Console in the WordPress admin bar.
+1. Open the site name menu (top left) and choose View in Search Console.
 
 == Changelog ==
 
 = 1.2.1 =
-* **View in Search Console** appears on mobile: the link lives under the site name menu on the front end and under the pencil menu in the post editor (WordPress hides custom top-level admin bar items on narrow screens).
+* **View in Search Console** lives under the site name menu on the front end and under the pencil menu in the post editor (WordPress hides custom top-level admin bar items, including on mobile).
 * Admin bar link when editing draft, pending, or scheduled posts (uses the preview URL for the page filter).
+* Directory screenshot and readme updated to show the correct menu location.
 
 = 1.2.0 =
 * Property picker: choose the exact Search Console property (domain or URL prefix) instead of abstract type radios.
@@ -87,7 +96,7 @@ No. This only deep-links to GSC for the current URL.
 == Upgrade Notice ==
 
 = 1.2.1 =
-Mobile admin bar fix and draft post support. Recommended if you use the admin bar on a phone or tablet.
+Correct admin bar menu placement (site name / pencil menus), draft post support, and updated directory screenshot. Recommended for all installs on 1.2.0 or earlier.
 
 = 1.2.0 =
 Easier property setup with a picker and test link. Existing domain/URL-prefix choices migrate automatically. Update from 1.1.0.
