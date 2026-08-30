@@ -10,10 +10,11 @@ STAGE="$(mktemp -d)"
 OUT="${ROOT}/dist/${SLUG}-${VERSION}.zip"
 rm -f "$OUT"
 
-mkdir -p "${ROOT}/dist" "${STAGE}/${SLUG}/img"
+mkdir -p "${ROOT}/dist" "${STAGE}/${SLUG}/img" "${STAGE}/${SLUG}/js"
 # Match .distignore: wordpress.org uses readme.txt, not GitHub README.md.
 cp at-search-console.php readme.txt "${STAGE}/${SLUG}/"
 cp img/icon-256x256.png img/screenshot-1.png "${STAGE}/${SLUG}/img/"
+cp js/settings.js "${STAGE}/${SLUG}/js/"
 
 # Do not ship OS junk or git metadata.
 (
