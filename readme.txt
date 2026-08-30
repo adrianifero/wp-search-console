@@ -3,7 +3,7 @@ Contributors: adrianifero
 Tags: seo, google search console, gsc, admin bar, performance
 Requires at least: 6.0
 Tested up to: 7.1
-Stable tag: 1.1.0
+Stable tag: 1.2.0
 Requires PHP: 7.4
 License: GPLv2 or later
 License URI: https://www.gnu.org/licenses/gpl-2.0.html
@@ -23,15 +23,16 @@ It does not install a tracking tag. It does not pull analytics into WordPress. I
 * Admin bar link on the front end for the current page
 * Same link when editing a published post or page in wp-admin
 * Works for users with the `manage_options` capability
-* Setting for URL-prefix vs domain Search Console property
+* Pick your exact Search Console property from likely candidates (domain or URL prefix)
+* **Test this property** link on the settings screen before using the admin bar
 * Page filter uses “URLs containing” so UTM and other query variants still match
 
 == Installation ==
 
 1. Install from Plugins → Add New (search “AT Search Console”), or upload a zip whose top-level folder is `at-search-console`.
 2. Activate AT Search Console.
-3. Visit any front-end page while logged in as an administrator. Use **View in Search Console** in the admin bar.
-4. If GSC opens the wrong property, go to Settings → AT Search Console and switch property type.
+3. Go to Settings → AT Search Console. Pick the property that matches Search Console, click **Test this property**, then save.
+4. Visit any front-end page while logged in as an administrator. Use **View in Search Console** in the admin bar.
 
 Keep a single copy of the plugin. If two “AT Search Console” rows appear under Plugins, deactivate and delete the extra folder.
 
@@ -41,9 +42,9 @@ Keep a single copy of the plugin. If two “AT Search Console” rows appear und
 
 Yes. The site (or domain) must be a verified property in your Google account. If it is not, Google will ask you to verify when the link opens.
 
-= Why does it open the wrong property? =
+= Why does it say I do not have access to this property? =
 
-Your GSC property may be a domain property (`sc-domain:example.com`) while the plugin was set to URL prefix, or the other way around. Change it under Settings → AT Search Console.
+The property selected in Settings does not match a property you verified in Search Console. Open Search Console, check the property list, pick the same entry under Settings → AT Search Console, and use **Test this property** before using the admin bar link.
 
 = Why do I see two AT Search Console plugins? =
 
@@ -59,13 +60,19 @@ No. This only deep-links to GSC for the current URL.
 
 == Changelog ==
 
+= 1.2.0 =
+* Property picker: choose the exact Search Console property (domain or URL prefix) instead of abstract type radios.
+* **Test this property** on settings to verify access before using the admin bar; updates live when you change the dropdown (no save required to test).
+* First-run setup notice; reload reminder after saving settings.
+* Domain properties use path-based page filters; 16-month date range on performance links.
+* Tested up to WordPress 7.1.
+
 = 1.1.0 =
 * Rebuild: encoded URLs, fixed metrics parameter, admin-bar link when editing a published post or page.
 * Settings for URL-prefix vs domain Search Console property, with migration from the old option.
 * Page filter uses URLs containing so UTM and other query variants still match.
 * Warn if two copies of the plugin are active, or if the folder is not `at-search-console`.
 * Settings screen with icon and screenshot.
-* Declares compatibility with WordPress 7.1.
 
 = 1.0.1 =
 * Select between a domain property or a regular property.
@@ -75,5 +82,5 @@ No. This only deep-links to GSC for the current URL.
 
 == Upgrade Notice ==
 
-= 1.1.0 =
-Fixes the Search Console link, migrates the old property setting, and adds the admin-bar link when editing a published page. Update from 1.0.1.
+= 1.2.0 =
+Easier property setup with a picker and test link. Existing domain/URL-prefix choices migrate automatically. Update from 1.1.0.
