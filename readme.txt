@@ -2,7 +2,7 @@
 Contributors: adrianifero
 Tags: seo, google search console, gsc, admin bar, performance
 Requires at least: 6.0
-Tested up to: 6.8
+Tested up to: 7.1
 Stable tag: 1.1.0
 Requires PHP: 7.4
 License: GPLv2 or later
@@ -65,6 +65,7 @@ No. This only deep-links to GSC for the current URL.
 * Page filter uses URLs containing so UTM and other query variants still match.
 * Warn if two copies of the plugin are active, or if the folder is not `at-search-console`.
 * Settings screen with icon and screenshot.
+* Declares compatibility with WordPress 7.1.
 
 = 1.0.1 =
 * Select between a domain property or a regular property.
