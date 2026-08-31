@@ -3,7 +3,7 @@
  * Plugin Name: AT Search Console
  * Plugin URI:  https://adriantoro.com/wordpress-plugins/at-search-console/
  * Description: Open the current page in Google Search Console from the WordPress admin bar. One click to that URL's performance.
- * Version:     1.2.1
+ * Version:     1.2.2
  * Author:      Adrian Toro
  * Author URI:  https://adriantoro.com
  * Text Domain: at-search-console
@@ -21,7 +21,7 @@ final class AT_Search_Console {
 
 	const OPTION_KEY        = 'at_search_console_settings';
 	const LEGACY_OPTION_KEY   = 'at_search_console_option';
-	const VERSION             = '1.2.1';
+	const VERSION             = '1.2.2';
 	const INSTALL_SLUG        = 'at-search-console';
 	const GSC_PERFORMANCE_URL = 'https://search.google.com/search-console/performance/search-analytics';
 
@@ -29,6 +29,8 @@ final class AT_Search_Console {
 		add_action( 'plugins_loaded', array( __CLASS__, 'maybe_migrate_legacy_option' ), 5 );
 		add_action( 'plugins_loaded', array( __CLASS__, 'maybe_migrate_property_type' ), 6 );
 		add_action( 'admin_bar_menu', array( $this, 'add_admin_bar_item' ), 100 );
+		add_action( 'wp_enqueue_scripts', array( $this, 'enqueue_admin_bar_styles' ) );
+		add_action( 'admin_enqueue_scripts', array( $this, 'enqueue_admin_bar_styles' ) );
 		add_action( 'admin_menu', array( $this, 'register_settings_page' ) );
 		add_action( 'admin_init', array( $this, 'register_settings' ) );
 		add_action( 'admin_init', array( $this, 'maybe_dismiss_setup_notice' ) );
@@ -450,8 +452,16 @@ final class AT_Search_Console {
 							</p>
 						</td>
 					</tr>
-					<tr>
-						<th scope="row"><label for="at-sc-custom-resource-id"><?php echo esc_html__( 'Custom property (advanced)', 'at-search-console' ); ?></label></th>
+					<tr id="at-sc-advanced-toggle-row">
+						<th scope="row"></th>
+						<td>
+							<button type="button" class="button-link" id="at-sc-advanced-toggle" aria-expanded="false" aria-controls="at-sc-advanced-row">
+								<?php echo esc_html__( 'Advanced »', 'at-search-console' ); ?>
+							</button>
+						</td>
+					</tr>
+					<tr id="at-sc-advanced-row" style="display:none;">
+						<th scope="row"><label for="at-sc-custom-resource-id"><?php echo esc_html__( 'Custom property', 'at-search-console' ); ?></label></th>
 						<td>
 							<input type="text" class="large-text code" name="<?php echo esc_attr( self::OPTION_KEY ); ?>[custom_resource_id]" id="at-sc-custom-resource-id" value="<?php echo esc_attr( $settings['custom_resource_id'] ); ?>" placeholder="sc-domain:example.com or https://www.example.com/" />
 							<p class="description"><?php echo esc_html__( 'Optional. Overrides the dropdown when your verified property is not listed above.', 'at-search-console' ); ?></p>
@@ -559,11 +569,30 @@ final class AT_Search_Console {
 	}
 
 	/**
-	 * Admin bar parent node. Core hides custom top-level items on narrow viewports.
-	 *
-	 * @return string|null Parent node id, or null when the link should not appear.
+	 * Hide the mobile-only admin bar duplicate on desktop widths.
 	 */
-	private function admin_bar_parent_id() {
+	public function enqueue_admin_bar_styles() {
+		if ( ! is_admin_bar_showing() ) {
+			return;
+		}
+
+		wp_register_style( 'at-search-console-admin-bar', false, array(), self::VERSION );
+		wp_enqueue_style( 'at-search-console-admin-bar' );
+		wp_add_inline_style(
+			'at-search-console-admin-bar',
+			'@media screen and (min-width:783px){#wpadminbar #wp-admin-bar-at-view-gsc-mobile{display:none!important;}}'
+		);
+	}
+
+	/**
+	 * Whitelisted parent for the mobile-only admin bar duplicate.
+	 *
+	 * WordPress hides custom top-level admin bar items below 783px; submenu items under
+	 * site-name (front end) or edit (post editor) remain visible.
+	 *
+	 * @return string|null Parent node id, or null when no mobile duplicate is needed.
+	 */
+	private function mobile_admin_bar_parent_id() {
 		if ( is_admin() ) {
 			$screen = function_exists( 'get_current_screen' ) ? get_current_screen() : null;
 			if ( $screen && 'post' === $screen->base ) {
@@ -573,6 +602,31 @@ final class AT_Search_Console {
 		}
 
 		return 'site-name';
+	}
+
+	/**
+	 * @param string      $page_url Page URL for the GSC filter.
+	 * @param string      $node_id  Admin bar node id.
+	 * @param string|null $parent   Optional parent node id.
+	 * @return array<string, mixed>
+	 */
+	private function admin_bar_node_args( $page_url, $node_id, $parent = null ) {
+		$args = array(
+			'id'    => $node_id,
+			'title' => __( 'View in Search Console', 'at-search-console' ),
+			'href'  => $this->build_gsc_url( $page_url ),
+			'meta'  => array(
+				'target' => '_blank',
+				'rel'    => 'noopener noreferrer',
+				'title'  => __( 'Open this page in Google Search Console performance', 'at-search-console' ),
+			),
+		);
+
+		if ( is_string( $parent ) && '' !== $parent ) {
+			$args['parent'] = $parent;
+		}
+
+		return $args;
 	}
 
 	/**
@@ -684,29 +738,21 @@ final class AT_Search_Console {
 			return;
 		}
 
-		$parent = $this->admin_bar_parent_id();
-		if ( null === $parent ) {
-			return;
-		}
-
 		$page_url = $this->current_page_url();
 		if ( '' === $page_url ) {
 			return;
 		}
 
-		$admin_bar->add_node(
-			array(
-				'id'     => 'at-view-gsc',
-				'parent' => $parent,
-				'title'  => __( 'View in Search Console', 'at-search-console' ),
-				'href'   => $this->build_gsc_url( $page_url ),
-				'meta'   => array(
-					'target' => '_blank',
-					'rel'    => 'noopener noreferrer',
-					'title'  => __( 'Open this page in Google Search Console performance', 'at-search-console' ),
-				),
-			)
-		);
+		// Desktop: top-level link (same placement as 1.2.0 and earlier).
+		$admin_bar->add_node( $this->admin_bar_node_args( $page_url, 'at-view-gsc' ) );
+
+		// Mobile: duplicate under a core-whitelisted parent (hidden on desktop via CSS).
+		$mobile_parent = $this->mobile_admin_bar_parent_id();
+		if ( null !== $mobile_parent ) {
+			$admin_bar->add_node(
+				$this->admin_bar_node_args( $page_url, 'at-view-gsc-mobile', $mobile_parent )
+			);
+		}
 	}
 }
 

@@ -182,20 +182,27 @@ expect( 'test URL has no page filter', false === strpos( $test_url, 'page=' ) );
 
 $js = file_get_contents( dirname( __DIR__ ) . '/js/settings.js' );
 expect( 'settings.js updates test link from dropdown', false !== strpos( $js, 'testLink.href' ) && false !== strpos( $js, 'select.addEventListener' ) );
+expect( 'settings.js toggles advanced property row', false !== strpos( $js, 'at-sc-advanced-toggle' ) && false !== strpos( $js, 'setAdvancedOpen' ) );
 
 $GLOBALS['test_is_admin']    = false;
 $GLOBALS['test_screen_base'] = null;
 expect(
-	'front-end admin bar parent is site-name',
-	'site-name' === call_private( $obj, $plugin, 'admin_bar_parent_id' )
+	'front-end mobile admin bar parent is site-name',
+	'site-name' === call_private( $obj, $plugin, 'mobile_admin_bar_parent_id' )
 );
 
 $GLOBALS['test_is_admin']    = true;
 $GLOBALS['test_screen_base'] = 'post';
 expect(
-	'post editor admin bar parent is edit',
-	'edit' === call_private( $obj, $plugin, 'admin_bar_parent_id' )
+	'post editor mobile admin bar parent is edit',
+	'edit' === call_private( $obj, $plugin, 'mobile_admin_bar_parent_id' )
 );
+
+$desktop_node = call_private( $obj, $plugin, 'admin_bar_node_args', array( 'https://infoeplus.com/', 'at-view-gsc' ) );
+expect( 'desktop admin bar node has no parent', ! isset( $desktop_node['parent'] ) );
+
+$mobile_node = call_private( $obj, $plugin, 'admin_bar_node_args', array( 'https://infoeplus.com/', 'at-view-gsc-mobile', 'site-name' ) );
+expect( 'mobile admin bar node has parent', isset( $mobile_node['parent'] ) && 'site-name' === $mobile_node['parent'] );
 
 $GLOBALS['test_post_status'] = array( 42 => 'publish' );
 $GLOBALS['test_permalinks']  = array( 42 => 'https://infoeplus.com/hello/' );

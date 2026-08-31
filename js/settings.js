@@ -5,6 +5,8 @@
 	var custom = document.getElementById( 'at-sc-custom-resource-id' );
 	var testLink = document.getElementById( 'at-sc-test-property' );
 	var preview = document.getElementById( 'at-sc-preview-resource-id' );
+	var advancedRow = document.getElementById( 'at-sc-advanced-row' );
+	var advancedToggle = document.getElementById( 'at-sc-advanced-toggle' );
 	var base = window.atSearchConsoleSettings && window.atSearchConsoleSettings.performanceBase;
 
 	if ( ! base || ! select || ! testLink ) {
@@ -35,6 +37,22 @@
 		if ( resourceId ) {
 			testLink.href = buildTestUrl( resourceId );
 		}
+	}
+
+	function setAdvancedOpen( open ) {
+		if ( ! advancedRow || ! advancedToggle ) {
+			return;
+		}
+		advancedRow.style.display = open ? '' : 'none';
+		advancedToggle.setAttribute( 'aria-expanded', open ? 'true' : 'false' );
+		advancedToggle.textContent = open ? 'Advanced \u00ab' : 'Advanced \u00bb';
+	}
+
+	if ( advancedRow && advancedToggle ) {
+		setAdvancedOpen( custom && custom.value ? !! custom.value.trim() : false );
+		advancedToggle.addEventListener( 'click', function () {
+			setAdvancedOpen( advancedRow.style.display === 'none' );
+		} );
 	}
 
 	select.addEventListener( 'change', update );
